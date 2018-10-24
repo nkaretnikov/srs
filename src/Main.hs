@@ -80,18 +80,25 @@ incCorrect s = s & correct +~ 1
 
 -- | Increment the counter on correct answers, otherwise just continue.
 handleEvent :: State -> BrickEvent Name Event -> EventM Name (Next State)
-handleEvent s@(State _        _ _ []) _
+handleEvent s@(State Question _ _ []) _
   = halt s
+handleEvent s@(State Answer   _ _ []) (VtyEvent (EvKey (KChar 'y') []))
+  = return (incCorrect s) >>= halt
+handleEvent s@(State Answer   _ _ []) (VtyEvent (EvKey (KChar 'n') []))
+  = halt s
+
 handleEvent s@(State Question _ _ _)  (VtyEvent (EvKey KEnter []))
   = evAnswer s
 handleEvent s@(State Answer   _ _ _)  (VtyEvent (EvKey (KChar 'y') []))
   = return (incCorrect s) >>= evQuestion
 handleEvent s@(State Answer   _ _ _)  (VtyEvent (EvKey (KChar 'n') []))
   = evQuestion s
+
 handleEvent s                         (VtyEvent (EvKey (KChar 'q') []))
   = halt s      -- exit
 handleEvent s                         (VtyEvent (EvKey KEsc []))
   = halt s      -- exit
+
 handleEvent s                         _
   = continue s  -- ignore
 
