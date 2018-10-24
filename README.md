@@ -13,7 +13,7 @@ can reveal the answer, self-assess the result and mark it accordingly.
 When there are no cards left, the summary is printed: the correct to total ratio
 and percentage.
 
-`-s` can be used to swap questions and answers.
+`-s` can be used to swap questions and answers.  Press `q` or `esc` to quit.
 
 Example (Japanese numbers):
 ```
