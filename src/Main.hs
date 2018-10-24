@@ -6,6 +6,7 @@ import Brick
 import Control.Lens
 import Graphics.Vty hiding (Event)
 import System.Environment
+import System.Exit
 import System.Random.Shuffle
 
 percent :: Int -> Int -> Int
@@ -121,10 +122,18 @@ mkCard s = Card
     q' = strip q
     a' = strip a
 
-main :: IO ()
-main = do
-  [file] <- getArgs
-  cs <- readFile file >>= return . map mkCard . lines >>= shuffleM
+usage :: IO ()
+usage = do
+  pname <- getProgName
+  putStrLn $ "Usage: ./" ++ pname ++ " [-s] FILE"
+  exitFailure
+
+swap :: Card -> Card
+swap (Card q a) = Card a q
+
+run :: (Card -> Card) -> FilePath -> IO ()
+run sf file = do
+  cs <- readFile file >>= return . map (sf . mkCard) . lines >>= shuffleM
   s <- customMain (mkVty defaultConfig) Nothing app (initState cs)
   let len = length cs
       cnt = s ^. correct
@@ -132,3 +141,12 @@ main = do
     [ show cnt, "/", show len
     , " (", show (percent cnt len), "%)"
     ]
+
+main :: IO ()
+main = do
+  args <- getArgs
+  case args of
+    [file]       -> run id   file
+    ["-s", file] -> run swap file
+    [file, "-s"] -> run swap file
+    _            -> usage

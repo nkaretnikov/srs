@@ -13,6 +13,8 @@ can reveal the answer, self-assess the result and mark it accordingly.
 When there are no cards left, the summary is printed: the correct to total ratio
 and percentage.
 
+`-s` can be used to swap questions and answers.
+
 Example (Japanese numbers):
 ```
 ./srs numbers.txt
