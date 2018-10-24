@@ -146,6 +146,8 @@ main :: IO ()
 main = do
   args <- getArgs
   case args of
+    ["--help"]   -> usage
+    ["-h"]       -> usage
     [file]       -> run id   file
     ["-s", file] -> run swap file
     [file, "-s"] -> run swap file
